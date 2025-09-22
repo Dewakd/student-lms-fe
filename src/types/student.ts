@@ -1,62 +1,40 @@
-// Student types based on technical architecture
+// Student types based on actual API response
 export interface Student {
-  id: string;
+  ID: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: string | null;
+  nim: string;
   name: string;
   email: string;
-  nim: string;
-  phone?: string;
-  enrollmentDate: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface CreateStudentRequest {
   name: string;
   email: string;
   nim: string;
-  phone?: string;
-  enrollmentDate: string;
 }
 
 export interface UpdateStudentRequest {
   name?: string;
   email?: string;
-  phone?: string;
+  nim?: string;
 }
 
-export interface StudentsResponse {
-  students: Student[];
-  total: number;
-  page: number;
-  limit: number;
-}
+// API returns array directly, no wrapper
+export type StudentsResponse = Student[];
 
-// API Response types
-export interface ApiResponse<T> {
-  data: T;
-  success: boolean;
-  message?: string;
-}
 
-export interface ApiError {
-  message: string;
-  code: string;
-  details?: any;
-}
 
 // Form validation types
 export interface StudentFormData {
   name: string;
   email: string;
   nim: string;
-  phone: string;
-  enrollmentDate: string;
 }
 
 export interface StudentFormErrors {
   name?: string;
   email?: string;
   nim?: string;
-  phone?: string;
-  enrollmentDate?: string;
 }

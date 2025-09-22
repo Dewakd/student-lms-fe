@@ -3,28 +3,16 @@ import {
   Student, 
   StudentsResponse, 
   CreateStudentRequest, 
-  UpdateStudentRequest, 
-  ApiResponse 
+  UpdateStudentRequest
 } from '@/types/student';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'http://localhost:8080/api';
 
 // API functions
 const studentApi = {
-  // Get all students with pagination and filters
-  getStudents: async (params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    status?: string;
-  }): Promise<StudentsResponse> => {
-    const searchParams = new URLSearchParams();
-    if (params?.page) searchParams.append('page', params.page.toString());
-    if (params?.limit) searchParams.append('limit', params.limit.toString());
-    if (params?.search) searchParams.append('search', params.search);
-    if (params?.status) searchParams.append('status', params.status);
-
-    const response = await fetch(`${API_BASE_URL}/students?${searchParams}`);
+  // Get all students - API returns array directly
+  getStudents: async (): Promise<StudentsResponse> => {
+    const response = await fetch(`${API_BASE_URL}/students`);
     if (!response.ok) {
       throw new Error('Failed to fetch students');
     }
@@ -32,7 +20,7 @@ const studentApi = {
   },
 
   // Get single student by ID
-  getStudent: async (id: string): Promise<ApiResponse<Student>> => {
+  getStudent: async (id: number): Promise<Student> => {
     const response = await fetch(`${API_BASE_URL}/students/${id}`);
     if (!response.ok) {
       throw new Error('Failed to fetch student');
@@ -41,7 +29,7 @@ const studentApi = {
   },
 
   // Create new student
-  createStudent: async (data: CreateStudentRequest): Promise<ApiResponse<Student>> => {
+  createStudent: async (data: CreateStudentRequest): Promise<Student> => {
     const response = await fetch(`${API_BASE_URL}/students`, {
       method: 'POST',
       headers: {
@@ -56,7 +44,7 @@ const studentApi = {
   },
 
   // Update student
-  updateStudent: async ({ id, data }: { id: string; data: UpdateStudentRequest }): Promise<ApiResponse<Student>> => {
+  updateStudent: async ({ id, data }: { id: number; data: UpdateStudentRequest }): Promise<Student> => {
     const response = await fetch(`${API_BASE_URL}/students/${id}`, {
       method: 'PUT',
       headers: {
@@ -71,32 +59,26 @@ const studentApi = {
   },
 
   // Delete student
-  deleteStudent: async (id: string): Promise<ApiResponse<null>> => {
+  deleteStudent: async (id: number): Promise<void> => {
     const response = await fetch(`${API_BASE_URL}/students/${id}`, {
       method: 'DELETE',
     });
     if (!response.ok) {
       throw new Error('Failed to delete student');
     }
-    return response.json();
   },
 };
 
 // React Query hooks
-export const useStudents = (params?: {
-  page?: number;
-  limit?: number;
-  search?: string;
-  status?: string;
-}) => {
+export const useStudents = () => {
   return useQuery({
-    queryKey: ['students', params],
-    queryFn: () => studentApi.getStudents(params),
+    queryKey: ['students'],
+    queryFn: () => studentApi.getStudents(),
     placeholderData: (previousData) => previousData,
   });
 };
 
-export const useStudent = (id: string) => {
+export const useStudent = (id: number) => {
   return useQuery({
     queryKey: ['student', id],
     queryFn: () => studentApi.getStudent(id),
